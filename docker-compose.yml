@@ -1,0 +1,32 @@
+name: tasks-application
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: dj-tasks
+    container_name: dj-app-tasks
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app:/app
+    depends_on:
+      - psql-task
+    env_file:
+      - ./app/.env
+    command: ["python", "manage.py" , "runserver", "0.0.0.0:8080"]
+
+  psql-task:
+    image: postgres:16-alpine
+    container_name: psql-tasks
+    ports:
+      - 5432:5432
+    volumes:
+      - task-psql-volume:/var/lib/postgresql/data
+    env_file:
+      - ./db/.env
+
+
+volumes:
+  task-psql-volume:
