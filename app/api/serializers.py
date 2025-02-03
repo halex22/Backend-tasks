@@ -22,7 +22,7 @@ class UserSerializer(ModelSerializer):
             password= validated_data['password']
         )
         return user
-
+    
 
 class MessageBoardSerializer(ModelSerializer):
     author = StringRelatedField()
@@ -33,7 +33,7 @@ class MessageBoardSerializer(ModelSerializer):
 
 
 class MessageBoardSerializer(ModelSerializer):
-    subscribers = PrimaryKeyRelatedField(many=True, queryset=MyUser.objects.all())
+    subscribers = StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = MessageBoard
