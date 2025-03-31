@@ -1,21 +1,37 @@
 name: tasks-application
 
 services:
-  app:
+  app1:
     build:
       context: ./app
       dockerfile: Dockerfile
     image: dj-tasks
-    container_name: dj-app-tasks
-    ports:
-      - 8080:8080
+    container_name: dj-app-tasks_1
     volumes:
       - ./app:/app
     depends_on:
       - psql-task
     env_file:
       - ./app/.env
-    command: ["python", "manage.py" , "runserver", "0.0.0.0:8080"]
+    command: ["gunicorn", "--config", "gunicorn.conf.py", "app.wsgi:application"]
+    networks:
+      - task_network
+
+  app2:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: dj-tasks
+    container_name: dj-app-tasks_2
+    volumes:
+      - ./app:/app
+    depends_on:
+      - psql-task
+    env_file:
+      - ./app/.env
+    command: ["gunicorn", "--config", "gunicorn.conf.py", "app.wsgi:application"]
+    networks:
+      - task_network
 
   psql-task:
     image: postgres:16-alpine
@@ -26,7 +42,24 @@ services:
       - task-psql-volume:/var/lib/postgresql/data
     env_file:
       - ./db/.env
+    networks:
+      - task_network
 
+  nginx:
+    image: nginx:latest
+    container_name: task_nginx_proxy
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app1
+      - app2
+    ports:
+      - 80:80
+    networks:
+      - task_network
+
+networks:
+  task_network:
 
 volumes:
   task-psql-volume:

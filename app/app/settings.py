@@ -5,7 +5,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 SECRET_KEY = environ.get('KEY', 'my_secret_key')
 
 ENVIRONMENT = environ.get('ENVIRONMENT', 'DEVELOPMENT')
@@ -26,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api', 
+    'api',
     'rest_framework',
     'corsheaders'
 ]
@@ -121,6 +120,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -128,7 +129,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'api.MyUser'
 
-if ENVIRONMENT == 'DEVELOPMENT': 
+if ENVIRONMENT == 'DEVELOPMENT':
     CORS_ALLOW_ALL_ORIGINS = True
 else:
     CORS_ALLOWED_ORIGINS = []
